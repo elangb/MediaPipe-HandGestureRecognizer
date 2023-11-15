@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mengenali gerakan tangan menggunakan MediaPipe HandGestureRecognizer</title>
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+  <link rel="stylesheet" href="style.css"> <!-- Tambahkan jalur ke style.css Anda -->
+
+  <!-- Tambahkan stylesheet atau meta tag tambahan sesuai kebutuhan -->
+</head>
+<body>
+
+  <h1>Mengenali gerakan tangan menggunakan tugas MediaPipe HandGestureRecognizer</h1>
+
+  <section id="demos" class="invisible">
+    <h2><br>Demo: Deteksi gerakan tangan terus-menerus dengan webcam</h2>
+    <p>Gunakan tangan Anda untuk membuat gerakan di depan kamera untuk mendapatkan klasifikasi gerakan. </br>Klik <b>aktifkan webcam</b> di bawah dan berikan akses ke webcam jika diminta.</p>
+
+    <div id="liveView" class="videoView">
+      <button id="webcamButton" class="mdc-button mdc-button--raised">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__label">AKTIFKAN WEBCAM</span>
+      </button>
+      <div style="position: relative;">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas class="output_canvas" id="output_canvas" width="1280" height="720" style="position: absolute; left: 0px; top: 0px;"></canvas>
+        <p id='gesture_output' class="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sertakan file JavaScript Anda -->
+  <script type="module" src="index.js"></script>
+
+</body>
+</html>
