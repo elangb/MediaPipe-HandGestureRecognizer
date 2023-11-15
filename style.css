@@ -56,8 +56,9 @@
   }
   
   .videoView {
-    /* position: absolute; */
-    /* float: left; */
+    position: absolute;
+    justify-content: center;
+    float: left;
     width: 48%;
     margin: 2% 1%;
     cursor: pointer;
