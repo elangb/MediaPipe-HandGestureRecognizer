@@ -11,6 +11,7 @@ let enableWebcamButton;
 let webcamRunning = false;
 const videoHeight = "360px";
 const videoWidth = "480px";
+let coordinatesElement; // Tambahkan variabel global untuk menyimpan referensi ke elemen koordinat telapak tangan.
 
 // Sebelum kita bisa menggunakan kelas HandLandmarker, kita harus menunggu
 // sampai itu selesai dimuat. Model Machine Learning bisa besar dan memerlukan
@@ -59,16 +60,7 @@ async function handleClick(event) {
   }
 
   const results = gestureRecognizer.recognize(event.target);
-  const bahasaIndonesia = {
-    "None": "Tidak Ada",
-    "Closed_Fist": "Tinju Tertutup",
-    "Open_Palm": "Telapak Tangan Terbuka",
-    "Pointing_Up": "Menunjuk Ke Atas",
-    "Thumb_Down": "Ibu Jari Kebawah",
-    "Thumb_Up": "Ibu Jari Keatas",
-    "Victory": "Kemenangan",
-    "ILoveYou": "Aku Cinta Kamu"
-  };
+  
 
   // Lihat hasil di konsol untuk melihat formatnya
   console.log(results);
@@ -127,6 +119,14 @@ async function handleClick(event) {
         color: "#FF0000",
         lineWidth: 1
       });
+
+      // Tampilkan koordinat telapak tangan
+      if (!coordinatesElement) {
+        coordinatesElement = document.createElement('div');
+        coordinatesElement.setAttribute('id', 'coordinates');
+        event.target.parentNode.appendChild(coordinatesElement);
+      }
+      coordinatesElement.innerText = `Koordinat Telapak Tangan: (${landmarks[0].x.toFixed(2)}, ${landmarks[0].y.toFixed(2)})`;
     }
   }
 }
@@ -222,19 +222,28 @@ async function predictWebcam() {
         color: "#FF0000",
         lineWidth: 2
       });
+
+      // Tampilkan koordinat telapak tangan
+      if (!coordinatesElement) {
+        coordinatesElement = document.createElement('div');
+        coordinatesElement.setAttribute('id', 'coordinates');
+        demosSection.appendChild(coordinatesElement);
+      }
+      coordinatesElement.innerText = `Koordinat Telapak Tangan: (${landmarks[0].x.toFixed(2)}, ${landmarks[0].y.toFixed(2)})`;
     }
   }
   canvasCtx.restore();
   const bahasaIndonesia = {
     "None": "Tidak Ada",
     "Closed_Fist": "Tinju Tertutup",
-    "Open_Palm": "Hai",
-    "Pointing_Up": "Saya Suka",
-    "Thumb_Down": "Saya Kurang Suka",
-    "Thumb_Up": "Bagus",
+    "Open_Palm": "Telapak Tangan Terbuka",
+    "Pointing_Up": "Menunjuk Ke Atas",
+    "Thumb_Down": "Ibu Jari Kebawah",
+    "Thumb_Up": "Ibu Jari Keatas",
     "Victory": "Kemenangan",
-    "ILoveYou": "Aku Cinta Kamu"
+    "ILoveYou": "Aku Cinta Kamu",
   };
+  
   if (results.gestures.length > 0) {
     gestureOutput.style.display = "block";
     gestureOutput.style.width = videoWidth;
