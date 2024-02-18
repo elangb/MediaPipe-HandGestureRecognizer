@@ -11,11 +11,9 @@ let enableWebcamButton;
 let webcamRunning = false;
 const videoHeight = "360px";
 const videoWidth = "480px";
-let coordinatesElement; // Tambahkan variabel global untuk menyimpan referensi ke elemen koordinat telapak tangan.
+let coordinatesElement;
 
-// Sebelum kita bisa menggunakan kelas HandLandmarker, kita harus menunggu
-// sampai itu selesai dimuat. Model Machine Learning bisa besar dan memerlukan
-// waktu sebentar untuk mendapatkan semua yang diperlukan untuk dijalankan.
+// Fungsi untuk membuat gesture recognizer
 const createGestureRecognizer = async () => {
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -29,19 +27,19 @@ const createGestureRecognizer = async () => {
     runningMode: runningMode
   });
   demosSection.classList.remove("invisible");
+  
+  // Tambahkan kategori baru ke dalam model
+  gestureRecognizer.addCategory("New_Gesture_2");
 };
 createGestureRecognizer();
 
-/********************************************************************
-// Demo 1: Mendeteksi gerakan tangan pada gambar
-********************************************************************/
-
+// Mengatur event listener untuk menghandle klik pada gambar
 const imageContainers = document.getElementsByClassName("detectOnClick");
-
 for (let i = 0; i < imageContainers.length; i++) {
   imageContainers[i].children[0].addEventListener("click", handleClick);
 }
 
+// Fungsi untuk menangani klik pada gambar
 async function handleClick(event) {
   if (!gestureRecognizer) {
     alert("Harap tunggu hingga gestureRecognizer selesai dimuat");
@@ -52,7 +50,7 @@ async function handleClick(event) {
     runningMode = "IMAGE";
     await gestureRecognizer.setOptions({ runningMode: "IMAGE" });
   }
-  // Hapus semua landmark sebelumnya
+
   const allCanvas = event.target.parentNode.getElementsByClassName("canvas");
   for (var i = allCanvas.length - 1; i >= 0; i--) {
     const n = allCanvas[i];
@@ -61,9 +59,8 @@ async function handleClick(event) {
 
   const results = gestureRecognizer.recognize(event.target);
   
-
-  // Lihat hasil di konsol untuk melihat formatnya
   console.log(results);
+  
   if (results.gestures.length > 0) {
     results.gestures.forEach(gesture => {
       gesture.forEach(category => {
@@ -120,7 +117,6 @@ async function handleClick(event) {
         lineWidth: 1
       });
 
-      // Tampilkan koordinat telapak tangan
       if (!coordinatesElement) {
         coordinatesElement = document.createElement('div');
         coordinatesElement.setAttribute('id', 'coordinates');
@@ -130,10 +126,6 @@ async function handleClick(event) {
     }
   }
 }
-
-/********************************************************************
-// Demo 2: Terus-menerus mengambil gambar dari aliran webcam dan mendeteksinya.
-********************************************************************/
 
 const video = document.getElementById("webcam");
 const canvasElement = document.getElementById("output_canvas");
@@ -169,16 +161,14 @@ function enableCam(event) {
     enableWebcamButton.innerText = "NONAKTIFKAN PREDIKSI";
   }
 
-  // Parameter getUsermedia.
   const constraints = {
     video: true
   };
 
-  // Aktifkan aliran webcam.
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     video.srcObject = stream;
     video.addEventListener("loadeddata", () => {
-      video.style.transform = "scaleX(-1)"; // Flip horizontal
+      video.style.transform = "scaleX(-1)"; 
       predictWebcam();
     });
   });
@@ -188,11 +178,12 @@ let lastVideoTime = 1;
 let results = undefined;
 async function predictWebcam() {
   const webcamElement = document.getElementById("webcam");
-  // Sekarang mari kita mulai mendeteksi aliran.
+  
   if (runningMode === "IMAGE") {
     runningMode = "VIDEO";
     await gestureRecognizer.setOptions({ runningMode: "VIDEO" });
   }
+
   let nowInMs = Date.now();
   if (video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
@@ -223,7 +214,6 @@ async function predictWebcam() {
         lineWidth: 2
       });
 
-      // Tampilkan koordinat telapak tangan
       if (!coordinatesElement) {
         coordinatesElement = document.createElement('div');
         coordinatesElement.setAttribute('id', 'coordinates');
@@ -242,6 +232,8 @@ async function predictWebcam() {
     "Thumb_Up": "Ibu Jari Keatas",
     "Victory": "Kemenangan",
     "ILoveYou": "Aku Cinta Kamu",
+    "New_Gesture": "Gerakan Baru",
+    "New_Gesture_2": "Gerakan Baru 2"
   };
   
   if (results.gestures.length > 0) {
@@ -257,7 +249,7 @@ async function predictWebcam() {
   } else {
     gestureOutput.style.display = "none";
   }
-  // Panggil fungsi ini lagi untuk terus memprediksi saat browser siap.
+  
   if (webcamRunning === true) {
     window.requestAnimationFrame(predictWebcam);
   }
